@@ -39,7 +39,7 @@ pipeline {
 
         stage('Push Docker Image to ECR') {
             steps {
-                sh 'sudo docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG'
+                sh 'sudo docker push public.ecr.aws/c0m6s3p2/dolev-cats:latest'
             }
         }
     }
