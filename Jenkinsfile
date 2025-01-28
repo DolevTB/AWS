@@ -46,7 +46,7 @@ pipeline {
         }
         stage('Deploy container') {
             steps {
-                sh 'docker run -d -p 8080:8080 dolevicats:latest'
+                sh 'docker run -d -p 8080:8080 -p 5000:5000 dolevicats:latest'
             }
         }
     }
