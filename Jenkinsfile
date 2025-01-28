@@ -33,6 +33,7 @@ pipeline {
                 sh '''
                     cd flask-app
                     sudo docker build -t $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
+                    sleep(10)
                     sudo docker tag dolev-cats:latest public.ecr.aws/c0m6s3p2/dolev-cats:latest
                 '''
             }
