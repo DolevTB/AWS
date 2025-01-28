@@ -32,7 +32,7 @@ pipeline {
             steps {
                 sh '''
                     cd flask-app
-                    docker build .
+                    sudo docker build .
                 '''
             }
         }
