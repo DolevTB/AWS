@@ -30,9 +30,13 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG -f "flask-app/Dockerfile" .'
-            }
-        }
+                sh '''
+                    docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/workspace -w /workspace --rm jenkins-docker-helper /bin/bash -c "
+                        docker build -t $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG -f 'flask-app/Dockerfile' .
+                    "
+                '''
+    }
+}
 
         stage('Push Docker Image to ECR') {
             steps {
