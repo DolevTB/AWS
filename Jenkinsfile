@@ -34,13 +34,14 @@ pipeline {
                     cd flask-app
                     sudo docker build -t dolevicats .
                     sudo docker tag dolevicats:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/dolevicats:latest
+                    sudo docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/dolevicats:latest
                 '''
             }
         }
 
         stage('Push Docker Image to ECR') {
             steps {
-                sh 'sudo docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/dolevicats:latest'
+                sh ''
             }
         }
     }
