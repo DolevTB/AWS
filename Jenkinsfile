@@ -33,8 +33,8 @@ pipeline {
             steps {
                 sh '''
                     cd flask-app
-                    docker build -t dolevflask .
-                    docker tag dolevflask:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/dolevicats:latest
+                    docker build -t dolevicats .
+                    docker tag dolevicats:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/dolevicats:latest
                 '''
             }
         }
@@ -43,6 +43,12 @@ pipeline {
             steps {
                 sh 'docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/dolevicats:latest'
             }
+        }
+    }
+    post { 
+        always { 
+            echo " removing container "
+            sh 'docker image prune -af'
         }
     }
 }
