@@ -32,7 +32,7 @@ pipeline {
             steps {
                 sh '''
                     cd flask-app
-                    docker build -t $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
+                    docker build .
                 '''
             }
         }
