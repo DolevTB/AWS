@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'docker:latest'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'  // מאפשר גישה ל-Docker daemon של המארח
+        }
+    }
 
     environment {
         AWS_REGION = 'us-east-1'
@@ -31,12 +36,10 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                    docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/workspace -w /workspace --rm jenkins-docker-helper /bin/bash -c "
-                        docker build -t $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG -f 'flask-app/Dockerfile' .
-                    "
+                    docker build -t $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG -f "flask-app/Dockerfile" .
                 '''
-    }
-}
+            }
+        }
 
         stage('Push Docker Image to ECR') {
             steps {
