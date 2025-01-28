@@ -44,6 +44,11 @@ pipeline {
                 sh 'docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/dolevicats:latest'
             }
         }
+        stage('Deploy container') {
+            steps {
+                sh 'docker run -d -p 8080:8080 dolevicats:latest'
+            }
+        }
     }
     post { 
         always { 
