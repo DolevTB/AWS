@@ -22,7 +22,7 @@ pipeline {
             steps {
                 withAWS(credentials: 'aws-credentials-id') {
                     sh '''
-                        aws ecr-public get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin public.ecr.aws/992382545251
+                        aws ecr-public get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin public.ecr.aws/c0m6s3p2
                     '''
                 }
             }
