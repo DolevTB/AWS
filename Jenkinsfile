@@ -32,14 +32,14 @@ pipeline {
             steps {
                 sh '''
                     cd flask-app
-                    sudo docker build .
+                    sudo docker build -t $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
                 '''
             }
         }
 
         stage('Push Docker Image to ECR') {
             steps {
-                sh 'docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG'
+                sh 'sudo docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG'
             }
         }
     }
