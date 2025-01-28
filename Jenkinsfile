@@ -22,7 +22,7 @@ pipeline {
             steps {
                 withAWS(credentials: 'aws-credentials-id') {
                     sh '''
-                        aws ecr-public get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin public.ecr.aws/c0m6s3p2
+                        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com
                     '''
                 }
             }
@@ -32,15 +32,15 @@ pipeline {
             steps {
                 sh '''
                     cd flask-app
-                    sudo docker build -t dolev-cats .
-                    sudo docker tag dolev-cats:latest public.ecr.aws/c0m6s3p2/dolev-cats:latest
+                    sudo docker build -t dolevicats .
+                    sudo docker tag dolevicats:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/dolevicats:latest
                 '''
             }
         }
 
         stage('Push Docker Image to ECR') {
             steps {
-                sh 'sudo docker push public.ecr.aws/c0m6s3p2/dolev-cats:latest'
+                sh 'sudo docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/dolevicats:latest'
             }
         }
     }
