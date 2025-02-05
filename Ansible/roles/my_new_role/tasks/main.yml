@@ -1,0 +1,90 @@
+---
+- name: Install {{ service }}
+  dnf:
+    name: "{{ service }}"
+    state: present
+    allow_downgrade: yes
+  when: service == 'nginx'
+
+- name: Install cron
+  package:
+    name: cronie
+    state: present
+
+- name: Ensure cron service is running
+  service:
+    name: crond
+    state: started
+    enabled: yes
+
+- name: Start nginx
+  service:
+    name: "{{ service }}"
+    enabled: yes
+    state: started
+  when: service == 'nginx'
+
+- name: Remove decimal and multiply by 10 for mysql version
+  set_fact:
+    version_multiplied: "{{ (version.replace('.', '')|int) }}"
+  when: service == 'mysql'
+
+- name: Update yum repo
+  command: yum update -y
+  when: service == 'mysql'
+
+- name: Install MySQL repository RPM manually
+  shell: |
+    sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+    wget http://dev.mysql.com/get/mysql{{ version_multiplied  }}-community-release-el7-8.noarch.rpm
+    sudo yum localinstall -y mysql{{ version_multiplied  }}-community-release-el7-8.noarch.rpm
+    sudo yum install -y mysql-community-server
+  when: service == 'mysql'
+
+- name: Start mysqld 
+  service:
+    name: mysqld 
+    enabled: yes
+    state: started
+  ignore_errors: true
+  when: service == 'mysql'
+  
+- name: Extract day and time
+  set_fact:
+    day_: "{{ restart | split(' at ') | first }}"
+    hour_: "{{ restart | split(' at ') | last | split(':') | first }}"
+    min_: "{{ restart | split(' at ') | last | split(':') | last | split(' ') | first }}"
+    am_pm_: "{{restart | split(' ') | last}}"
+  
+- name: Convert hour to 24-hour format
+  set_fact:
+    hour_24_: >-
+      {% if am_pm_ == 'pm' and hour_ | int < 12 %}
+        {{ hour_ | int + 12 }}
+      {% elif am_pm_ == 'am' and hour_ | int == 12 %}
+        0
+      {% else %}
+        {{ hour_ | int }}
+      {% endif %}
+
+- name: Debug minute and hour values
+  debug:
+    msg: "minute: {{ min_ }}, hour: {{ hour_24_ }}"
+
+- name: Day of the week to cron format
+  set_fact:
+    weekday_num: "{{ ['', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].index(day_) }}"
+
+- name: Debug weekday_num value
+  debug:
+    msg: "weekday_num: {{ weekday_num }}"
+
+- name: restart instance
+  cron:
+    name: restart on {{ restart }}
+    job: "/sbin/shutdown -r now"
+    minute: "{{ min_ }}"
+    hour: "{{ hour_24_ }}"
+    weekday: "{{ weekday_num }}"
+    day: "*"
+    user: "root"
