@@ -74,9 +74,9 @@
 - name: restart instance
   cron:
     name: restart on {{ restart }}
-    job: "/sbin/shutdown -r now"
     minute: "{{ min_ }}"
     hour: "{{ hour_24_ }}"
     weekday: "{{ weekday_num }}"
     day: "*"
     user: "root"
+    job: "sudo reboot"
