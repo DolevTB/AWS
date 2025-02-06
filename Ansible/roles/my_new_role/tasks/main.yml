@@ -1,7 +1,7 @@
 ---
 - name: Install {{ service }}
   dnf:
-    name: "{{ service }}"
+    name: "{{ service }}-{{ version }}"
     state: present
     allow_downgrade: yes
   when: service == 'nginx'
@@ -67,17 +67,9 @@
         {{ hour_ | int }}
       {% endif %}
 
-- name: Debug minute and hour values
-  debug:
-    msg: "minute: {{ min_ }}, hour: {{ hour_24_ }}"
-
 - name: Day of the week to cron format
   set_fact:
-    weekday_num: "{{ ['', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].index(day_) }}"
-
-- name: Debug weekday_num value
-  debug:
-    msg: "weekday_num: {{ weekday_num }}"
+    weekday_num: "{{ [' ', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].index(day_) }}"
 
 - name: restart instance
   cron:
